@@ -13,16 +13,20 @@ function changeBackgroundColor() {
 }
 
 function onStart() {
-    timerId = setInterval(changeBackgroundColor, 1000);
-    // startB.setAttribute('disabled', true);
-    // stopB.removeAttribute('disabled');
-    startB.toggleAttribute('disabled')
+    // startB.disabled = true;
+    // stopB.disabled = false;
+    startB.setAttribute('disabled', true);
+    stopB.removeAttribute('disabled');
+    // startB.toggleAttribute('disabled')
+    timeId = setInterval(changeBackgroundColor, 1000);
 }
 
 function onStop() {
-    clearInterval(timerId);
+    // startB.disabled = true;
+    // stopB.disabled = false;
     startB.removeAttribute('disabled');
-    // stopB.setAttribute('disabled', true);
+    stopB.setAttribute('disabled', true);
+    clearInterval(timerId);
 }
 
 function getRandomHexColor() {
