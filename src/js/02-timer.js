@@ -7,7 +7,7 @@ const startBut = document.querySelector('[data-start]');
 const fieldDay = document.querySelector('[data-days]');
 const fieldHour = document.querySelector('[data-hours]');
 const fieldMinute = document.querySelector('[data-minutes]');
-const fieldSecond = document.querySelector('[data-secondes]');
+const fieldSecond = document.querySelector('[data-seconds]');
 
 let timeId = null;
 let selectedDate = null;
@@ -23,21 +23,52 @@ const options = {
     minuteIncrement: 1,
 
     onClose(selectedDates) {
-        if (selectedDates[0].getTime() < Date.now()) {
-            return Notify.failure('Please choose a future date!');
-        } else {
-            selectedDate = selectedDates[0].getTime();
-            startBut.disabled = false;
-        }
-    },
-  };
+        onDateCheck(selectedDates);
+    }
+};
 
-  const flatp = flatpickr(dateInp, options); 
+flatpickr(dateInp, options); 
 
-function onStart() {
-    counter.start();
+function onDateCheck(selectedDates) {
+    selectedDate = selectedDates[0].getTime();
+    currentDate = new Date().getTime();
+
+    if (selectedDate > currentDate) {
+        startBut.disabled = false;
+        Report.success();
+        return;
+    }
+    Report.failure('Please, choose a future date');
 }
 
+function onStart() {
+    timeId = setInterval(() => {
+        currentDate = new Date().getTime();
+        if (selectedDate - currentDate <= 1000) {
+            clearInterval(timeId);
+            startBut.disabled = true;
+            dateInp.disabled = false;
+            return;
+        } else {
+            startBut.disabled = true;
+            dateInp.disabked = true;
+            currentDate += 1000;
+            remainingTime = Math.floor(selectedDate - currentDate);
+            convertMs(remainingTime);
+        }
+}, 1000);
+}
+
+function createMarkup({ days, hours, minutes, seconds }) {
+  fieldDay.textContent = days;
+  fieldHour.textContent = hours;
+  fieldMinute.textContent = minutes;
+  fieldSecond.textContent = seconds;
+}
+
+// function addLeadingZero(value) {
+//   return String(value).padStart(2, '0');
+// }
 
 function convertMs(ms) {
     const second = 1000;
@@ -52,40 +83,3 @@ function convertMs(ms) {
   
     return { days, hours, minutes, seconds };
   } 
-
-const counter = {
-  start() {
-    timeId = setInterval(() => {
-      currentDate = Date.now();
-      const deltaTime = selectedDate - currentDate;
-      updateTimerface(convertMs(deltaTime));
-      startBut.disabled = true;
-      dateInp.disabled = true;
-
-      if (deltaTime <= 1000) {
-        this.stop();
-        Report.info(
-          'Time end'
-        );
-      }
-    }, 1000);
-  },
-
-  stop() {
-    startBut.disabled = true;
-    dateInp.disabled = false;
-    clearInterval(timeId);
-    return;
-  },
-};
-
-function updateTimerface({ days, hours, minutes, seconds }) {
-  fieldDay.textContent = `${days}`;
-  fieldHour.textContent = `${hours}`;
-  fieldMinute.textContent = `${minutes}`;
-  fieldSecond.textContent = `${seconds}`;
-}
-
-function addLeadingZero(value) {
-  return String(value).padStart(2, '0');
-}
