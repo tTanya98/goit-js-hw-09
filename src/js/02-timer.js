@@ -10,8 +10,11 @@ const fieldMinute = document.querySelector('[data-minutes]');
 const fieldSecond = document.querySelector('[data-second]');
 
 let timeId = null;
-let timeDif = 0;
-let formatDate = null;
+let selectedDate = null;
+let currentDate = null;
+
+startBut.disabled = true;
+startBut.addEventListener('click', onStart);
 
 const options = {
     enableTime: true,
@@ -20,58 +23,69 @@ const options = {
     minuteIncrement: 1,
 
     onClose(selectedDates) {
-      currentDifferenceDate(selectedDates[0]);
+        if (selectedDates[0].getTime() < Date.now()) {
+            return Notify.failure('Please choose a future date!');
+        } else {
+            selectedDate = selectedDates[0].getTime();
+            startBut.disabled = false;
+        }
     },
   };
 
-flatpickr(dateInp, options);
+  const flatp = flatpickr(dateInp, options); 
 
-startBut.addEventListener('click', onStart);
-
-window.addEventListener('keydown', e => {
-    if (e.code === 'Escape' && timeId) {
-        clearInterval(timeId);
-        dateInp.removeAttribute('disabled');
-        startBut.setAttribute('disabled', true);
-        fieldSecond.textContent = '00';
-        fieldMinute.textContent = '00';
-        fieldHour.textContent = '00';
-        fieldDay.textContent = '00';
-    }
-});
-
-function startBut() {
-    timeId = setInterval(startTimer, 1000);
+function onStart() {
+    counter.start();
 }
 
-function currentDifferenceDate(selectedDates) {
-    const currentDate = Date.now();
-    if (selectedDates < currentDate) {
-        startBut.setAttribute('disabled', true);
-        return Notify.failure('Please choose a future date!');
-    }
-    timeDif = selectedDates.getTime() - currentDate;
-    formatDate = convertMs(timeDif);
-    renderDate(formatDate);
-    startBut.removeAttribute('disabled');
+
+function convertMs(ms) {
+    const second = 1000;
+    const minute = second * 60;
+    const hour = minute * 60;
+    const day = hour * 24;
+  
+    const days = Math.floor(ms / day);
+    const hours = Math.floor((ms % day) / hour);
+    const minutes = Math.floor(((ms % day) % hour) / minute);
+    const seconds = Math.floor((((ms % day) % hour) % minute) / second);
+  
+    return { days, hours, minutes, seconds };
+  } 
+
+const counter = {
+  start() {
+    timeId = setInterval(() => {
+      currentDate = Date.now();
+      const deltaTime = selectedDate - currentDate;
+      updateTimerface(convertMs(deltaTime));
+      startBut.disabled = true;
+      dateInp.disabled = true;
+
+      if (deltaTime <= 1000) {
+        this.stop();
+        Report.info(
+          'Time end'
+        );
+      }
+    }, TIMER_DELAY);
+  },
+
+  stop() {
+    startBut.disabled = true;
+    dateInp.disabled = false;
+    clearInterval(timeId);
+    return;
+  },
+};
+
+function updateTimerface({ days, hours, minutes, seconds }) {
+  fieldDay.textContent = `${days}`;
+  fieldHour.textContent = `${hours}`;
+  fieldMinute.textContent = `${minutes}`;
+  fieldSecond.textContent = `${seconds}`;
 }
 
-function startTimer() {
-    startBut.setAttribute('disabled', true);
-    dateInp.setAttribute('disabled', true);
-    timeDif -= 1000;
-    if (fieldSecond.textContent <= 0 && fieldMinute.textContent <= 0) {
-        Notify.success('Time end');
-        clearInterval(timeId);
-    } else {
-        formatDate = convertMs(timeDif);
-        renderDate(formatDate);
-    }
-}
-
-function renderDate(formatDate) {
-    fieldSecond.textContent = formatDate.seconds;
-    fieldMinute.textContent = formatDate.minutes;
-    fieldHour.textContent = formatDate.hours;
-    fieldDay.textContent = formatDate.days;
+function addLeadingZero(value) {
+  return String(value).padStart(2, '0');
 }
