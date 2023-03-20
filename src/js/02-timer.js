@@ -68,7 +68,7 @@ const counter = {
           'Time end'
         );
       }
-    }, TIMER_DELAY);
+    }, 1000);
   },
 
   stop() {
