@@ -6,7 +6,7 @@ let timeId = null;
 
 startB.addEventListener('click', onStart);
 stopB.addEventListener('click', onStop);
-stopB.disabled = true;
+
 
 function changeBackgroundColor() {
     document.body.style.backgroundColor = getRandomHexColor();
