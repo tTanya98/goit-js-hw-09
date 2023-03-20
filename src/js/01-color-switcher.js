@@ -26,7 +26,7 @@ function onStop() {
     // stopB.disabled = false;
     startB.removeAttribute('disabled');
     stopB.setAttribute('disabled', true);
-    clearInterval(timerId);
+    clearInterval(timeId);
 }
 
 function getRandomHexColor() {
