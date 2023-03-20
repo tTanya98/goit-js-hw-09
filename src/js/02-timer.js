@@ -3,7 +3,7 @@ import 'flatpickr/dist/flatpickr.min.css';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 const dateInp = document.querySelector('input#datetime-picker');
-const startB = document.querySelector('[data-start]');
+const startBut = document.querySelector('[data-start]');
 const fieldDay = document.querySelector('[data-days]');
 const fieldHour = document.querySelector('[data-hours]');
 const fieldMinute = document.querySelector('[data-minutes]');
@@ -26,13 +26,13 @@ const options = {
 
 flatpickr(dateInp, options);
 
-startB.addEventListener('click', onStart);
+startBut.addEventListener('click', onStart);
 
 window.addEventListener('keydown', e => {
     if (e.code === 'Escape' && timeId) {
         clearInterval(timeId);
         dateInp.removeAttribute('disabled');
-        startB.setAttribute('disabled', true);
+        startBut.setAttribute('disabled', true);
         fieldSecond.textContent = '00';
         fieldMinute.textContent = '00';
         fieldHour.textContent = '00';
@@ -40,24 +40,24 @@ window.addEventListener('keydown', e => {
     }
 });
 
-function startB() {
+function startBut() {
     timeId = setInterval(startTimer, 1000);
 }
 
 function currentDifferenceDate(selectedDates) {
     const currentDate = Date.now();
     if (selectedDates < currentDate) {
-        startB.setAttribute('disabled', true);
+        startBut.setAttribute('disabled', true);
         return Notify.failure('Please choose a future date!');
     }
     timeDif = selectedDates.getTime() - currentDate;
     formatDate = convertMs(timeDif);
     renderDate(formatDate);
-    startB.removeAttribute('disabled');
+    startBut.removeAttribute('disabled');
 }
 
 function startTimer() {
-    startB.setAttribute('disabled', true);
+    startBut.setAttribute('disabled', true);
     dateInp.setAttribute('disabled', true);
     timeDif -= 1000;
     if (fieldSecond.textContent <= 0 && fieldMinute.textContent <= 0) {
