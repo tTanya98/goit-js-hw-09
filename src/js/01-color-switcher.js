@@ -14,14 +14,15 @@ function changeBackgroundColor() {
 
 function onStart() {
     timerId = setInterval(changeBackgroundColor, 1000);
-    startB.setAttribute('disabled', true);
-    stopB.removeAttribute('disabled');
+    // startB.setAttribute('disabled', true);
+    // stopB.removeAttribute('disabled');
+    startB.toggleAttribute('disabled')
 }
 
 function onStop() {
     clearInterval(timerId);
     startB.removeAttribute('disabled');
-    stopB.setAttribute('disabled', true);
+    // stopB.setAttribute('disabled', true);
 }
 
 function getRandomHexColor() {
