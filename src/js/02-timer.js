@@ -7,7 +7,7 @@ const startBut = document.querySelector('[data-start]');
 const fieldDay = document.querySelector('[data-days]');
 const fieldHour = document.querySelector('[data-hours]');
 const fieldMinute = document.querySelector('[data-minutes]');
-const fieldSecond = document.querySelector('[data-second]');
+const fieldSecond = document.querySelector('[data-secondes]');
 
 let timeId = null;
 let selectedDate = null;
