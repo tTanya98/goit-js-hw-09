@@ -4,22 +4,6 @@ const formRef = document.querySelector('.form')
 
 formRef.addEventListener('submit', onSubmitForm); 
 
-function onSubmitForm(e) {
-  e.preventDefault();
-  
-  let delay = Number(formRef.delay.value);
-  for (let i = 1; i <= formRef.amount.value; i += 1) {
-  createPromise(i, delay)
-  .then(({ position, delay }) => {
-    console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
-  })
-  .catch(({ position, delay }) => {
-    console.log(`❌ Rejected promise ${position} in ${delay}ms`);
-  });
-  delay += Number(formRef.stop.value);
-  }
-}
-
 function createPromise(position, delay) {
   const obj = { position, delay };
   const shouldResolve = Math.random() > 0.3;
@@ -32,4 +16,24 @@ function createPromise(position, delay) {
       }
     }, delay);
   });
+}
+
+function onSubmitForm(e) {
+  e.preventDefault();
+  const formData = new FormData(e.currentTarget);
+  const dataParam = {};
+  for (const [key, value] of formData.entries()) {
+    dataParam[key] = Number(value);
+  }
+  let { amount, step, delay} = dataParam;
+  for (let i = 1; i <= amount; i += 1) {
+    delay += step;
+  createPromise(i, delay)
+  .then(({ position, delay }) => {
+    console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
+  })
+  .catch(({ position, delay }) => {
+    console.log(`❌ Rejected promise ${position} in ${delay}ms`);
+  });
+  }
 }

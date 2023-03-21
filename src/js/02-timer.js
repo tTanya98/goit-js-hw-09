@@ -50,7 +50,7 @@ function addLeadingZero(value) {
 }
 
 function onStart() {
-    const selectedDate = fp.selectedDates[0];
+    const selectedDate = flatpickr.selectedDates[0];
     timeId = setInterval(() => {
         const startTime = new Date();
         const countdown = selectedDate - startTime;
