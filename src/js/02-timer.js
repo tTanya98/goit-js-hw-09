@@ -10,8 +10,9 @@ const fieldMinute = document.querySelector('[data-minutes]');
 const fieldSecond = document.querySelector('[data-seconds]');
 
 let timeId = null;
-let timeDif = 0;
-let formatDate = null;
+startBut.disabled = true;
+flatpickr(dateInp, options);
+startBut.addEventListener('click', onStart);
 
 const options = {
     enableTime: true,
@@ -20,51 +21,15 @@ const options = {
     minuteIncrement: 1,
 
     onClose(selectedDates) {
-        console.log(selectedDates[0]);
-        currentDifferenceDate(selectedDates[0]);
+       const currentDate = new Date();
+       if (selectedDates[0] - currentDate > 0) {
+        startBut.disabled = false;
+       } else {
+        startBut.disabled = true;
+        Notify.failure('Please, choose a future date');
+       }
     },
 };
-startBut.setAttribute('disabled', true)
-flatpickr(dateInp, options); 
-startBut.addEventListener('click', onStart);
-
-
-function onDateCheck(selectedDates) {
-    selectedDate = selectedDates[0].getTime();
-    currentDate = new Date().getTime();
-
-    if (selectedDate > currentDate) {
-        startBut.disabled = false;
-        Report.success();
-        return;
-    }
-    Report.failure('Please, choose a future date');
-}
-
-function onStart() {
-    timeId = setInterval(() => {
-        currentDate = new Date().getTime();
-        if (selectedDate - currentDate <= 1000) {
-            clearInterval(timeId);
-            startBut.disabled = true;
-            dateInp.disabled = false;
-            return;
-        } else {
-            startBut.disabled = true;
-            dateInp.disabked = true;
-            currentDate += 1000;
-            remainingTime = Math.floor(selectedDate - currentDate);
-            convertMs(remainingTime);
-        }
-}, 1000);
-}
-
-function createMarkup({ days, hours, minutes, seconds }) {
-  fieldDay.textContent = days;
-  fieldHour.textContent = hours;
-  fieldMinute.textContent = minutes;
-  fieldSecond.textContent = seconds;
-}
 
 function convertMs(ms) {
     const second = 1000;
@@ -78,4 +43,29 @@ function convertMs(ms) {
     const seconds = Math.floor((((ms % day) % hour) % minute) / second);
   
     return { days, hours, minutes, seconds };
-  } 
+} 
+
+function addLeadingZero(value) {
+    return String(value).padStart(2, 0);
+}
+
+function onStart() {
+    const selectedDate = fp.selectedDates[0];
+    timeId = setInterval(() => {
+        const startTime = new Date();
+        const countdown = selectedDate - startTime;
+        startBut.disabled = true; 
+        if (countdown < 0) {
+            clearInterval(timeId);
+            return;
+        }
+        updateTimer(convertMs(countdown));
+    }, 1000);
+}
+
+function updateTimer({ days, hours, minutes, seconds }) {
+  fieldDay.textContent = addLeadingZero(days);
+  fieldHour.textContent = addLeadingZero(hours);
+  fieldMinute.textContent = addLeadingZero(minutes);
+  fieldSecond.textContent = addLeadingZero(seconds);
+}
