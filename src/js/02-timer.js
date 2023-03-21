@@ -11,7 +11,6 @@ const fieldSecond = document.querySelector('[data-seconds]');
 
 let timeId = null;
 startBut.disabled = true;
-flatpickr(dateInp, options);
 startBut.addEventListener('click', onStart);
 
 const options = {
@@ -69,3 +68,4 @@ function updateTimer({ days, hours, minutes, seconds }) {
   fieldMinute.textContent = addLeadingZero(minutes);
   fieldSecond.textContent = addLeadingZero(seconds);
 }
+flatpickr(dateInp, options);
