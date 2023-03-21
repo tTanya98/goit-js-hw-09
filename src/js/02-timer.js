@@ -2,7 +2,7 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
-const dateInp = document.querySelector('input#datetime-picker');
+const dateInp = document.querySelector('#datetime-picker');
 const startBut = document.querySelector('[data-start]');
 const fieldDay = document.querySelector('[data-days]');
 const fieldHour = document.querySelector('[data-hours]');
@@ -10,11 +10,8 @@ const fieldMinute = document.querySelector('[data-minutes]');
 const fieldSecond = document.querySelector('[data-seconds]');
 
 let timeId = null;
-let selectedDate = null;
-let currentDate = null;
-
-startBut.disabled = true;
-startBut.addEventListener('click', onStart);
+let timeDif = 0;
+let formatDate = null;
 
 const options = {
     enableTime: true,
@@ -23,11 +20,14 @@ const options = {
     minuteIncrement: 1,
 
     onClose(selectedDates) {
-        onDateCheck(selectedDates);
-    }
+        console.log(selectedDates[0]);
+        currentDifferenceDate(selectedDates[0]);
+    },
 };
-
+startBut.setAttribute('disabled', true)
 flatpickr(dateInp, options); 
+startBut.addEventListener('click', onStart);
+
 
 function onDateCheck(selectedDates) {
     selectedDate = selectedDates[0].getTime();
@@ -65,10 +65,6 @@ function createMarkup({ days, hours, minutes, seconds }) {
   fieldMinute.textContent = minutes;
   fieldSecond.textContent = seconds;
 }
-
-// function addLeadingZero(value) {
-//   return String(value).padStart(2, '0');
-// }
 
 function convertMs(ms) {
     const second = 1000;
