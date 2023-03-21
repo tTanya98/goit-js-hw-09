@@ -2,7 +2,6 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
-const dateInp = document.querySelector('#datetime-picker');
 const startBut = document.querySelector('[data-start]');
 const fieldDay = document.querySelector('[data-days]');
 const fieldHour = document.querySelector('[data-hours]');
@@ -49,7 +48,7 @@ function addLeadingZero(value) {
 }
 
 function onStart() {
-    const selectedDate = flatpickr.selectedDates[0];
+    const selectedDate = fp.selectedDates[0];
     timeId = setInterval(() => {
         const startTime = new Date();
         const countdown = selectedDate - startTime;
@@ -68,4 +67,4 @@ function updateTimer({ days, hours, minutes, seconds }) {
   fieldMinute.textContent = addLeadingZero(minutes);
   fieldSecond.textContent = addLeadingZero(seconds);
 }
-flatpickr(dateInp, options);
+const fp = flatpickr('#datetime-picker', options);
